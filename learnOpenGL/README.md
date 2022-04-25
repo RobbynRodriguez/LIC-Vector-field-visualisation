@@ -35,3 +35,29 @@ Appuyer sur N permet d'afficher les normales à la surface, B permet de les enle
 Appuyer sur G permet d'afficher les glyphes des tangentes à la surface, H permet de les enlever.
 
 Appuyer sur 1 permet de faire tourner la lumière, 0 permet de l'arrêter.
+
+Appuyer sur echap permet de fermer la fenêtre
+
+
+## Contenu 
+
+Classe Axes : contient le mesh des axes
+
+Classe Camera : contient toute la gestion de la caméra (génération et déplacement)
+
+Classe Mesh : contient les fonctions pour configurer les buffers des maillages, faire le draw et calculer le champ de
+vecteurs tangent à chaque face du maillage.
+
+Classe Shader : contient la gestion des shaders 
+
+Classe Sphere : contient la création du mesh d'une sphère 
+
+Classe BézierSurface : contient la création d'une surface de Bézier à partir de points de contrôle
+
+Structure.h : contient des structures utilitaires
+
+Dossier shaders : contient les différents shaders utilisés, notamment :
+-le shader du LIC (qui va permettre de visualiser un champ de vecteurs d'une fonction donnée sur une texture) 
+-le shader des glyph qui permet de visualiser un champ de vecteurs discret avec des hedgehog. 
+
+Dossier textures : contient les différentes textures utilisées.

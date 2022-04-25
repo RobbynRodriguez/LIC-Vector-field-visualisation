@@ -108,7 +108,7 @@ int main() {
 
     /*----SURFACES DE BEZIER----*/
 
-    /*-----Points de controle-----*/
+    //Points de controle
 
     vector<vector<glm::vec3>> pointsControl;
     vector<glm::vec3> ligne1 = {
@@ -163,7 +163,7 @@ int main() {
     licShader.setInt("tex", 0);
 
 
-    /*-----GLYPHE FACE BASED VECTOR FIELD-----*/
+    /*-----GLYPHE HEDGEHOG----*/
     Shader glypheShader((path / "src/shaders/glyphe.vs").c_str(), (path / "src/shaders/glyphe.fs").c_str(),(path / "src/shaders/glyphe.gs").c_str() );
 
 
