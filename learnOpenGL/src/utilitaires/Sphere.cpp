@@ -6,7 +6,7 @@ Sphere::Sphere() {
     computeIndices(LONGITUDE);
 
     //On calcule chaque normal de chaque face
-    for (int i=0; i<indices.size(); i+=3){
+    for (int i=0; i<indices.size() - 2; i+=3){
 
         Triangle face;
         face.S1 = indices[i];
@@ -14,9 +14,6 @@ Sphere::Sphere() {
         face.S3 = indices[i+2];
         face.Normal = computeNormalTriangle(sommets[face.S1].Position, sommets[face.S2].Position,
                                             sommets[face.S3].Position);
-
-        //On ajoute la face
-        faces.push_back(face);
 
         //On ajoute aux sommets concernés la face dans laquelle ils interviennent
         sommets[face.S1].faces.push_back(face);
@@ -77,8 +74,11 @@ void Sphere::computeIndices(unsigned int n) {
         indices.push_back(0);
         indices.push_back(i+1);
         indices.push_back(i+2);
-
     }
+    //On ferme la boucle
+    indices.push_back(0);
+    indices.push_back(n);
+    indices.push_back(1);
 
     // Pour tout les triangles intemédiaires
     for(int i = 1; i < sommets.size() - n - 1; i++){
@@ -109,10 +109,14 @@ void Sphere::computeIndices(unsigned int n) {
     // Finalement pour la dernière longitude, particulière puisque tous liés au pôle
     for(int i = sommets.size() - n - 1; i < sommets.size()-2; i++){
         //Premier triangle
-        indices.push_back(sommets.size() - 1);
         indices.push_back(i+1);
-        indices.push_back(i+2);
+        indices.push_back(i);
+        indices.push_back(sommets.size() - 1);
     }
+    //on ferme la boucle
+    indices.push_back(sommets.size() - 1 - n);
+    indices.push_back(sommets.size() - 2);
+    indices.push_back(sommets.size() - 1);
 }
 
 //Calculer la normale d'un triangle

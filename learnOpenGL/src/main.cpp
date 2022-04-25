@@ -9,7 +9,6 @@
 #include "librairies/stb_image.h"
 #include "utilitaires/Camera.h"
 #include "utilitaires/Axes.h"
-#include "utilitaires/Cube.h"
 #include "bezier/BezierSurface.h"
 #include "utilitaires/Sphere.h"
 
@@ -38,6 +37,7 @@ float lightY = 5.0f;
 float lightZ = 1.5f * 3 * cos(0.5*der_time);
 glm::vec3 lightPos = glm::vec3(lightX, lightY, lightZ);
 bool lumiere_bouge;
+
 bool normales = false;
 bool glyphes = false;
 
@@ -59,7 +59,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 //Initialisation de la fenetre
 GLFWwindow* initialisationFenetre ();
 
-
+//Charger une texture
 unsigned int loadTexture(char const * path);
 
 
@@ -81,21 +81,21 @@ int main() {
         return -1;
     }
 
-
-    /*-----LIGHT-----*/
-
+    //Initialisation du path
     filesystem::path path = filesystem::current_path();
     path = path.parent_path();
 
+
+    /*-----LIGHT-----*/
+
+    //Shaders
     Shader lightingShader((path / "src/shaders/lighting.vs").c_str(), (path / "src/shaders/lighting.fs").c_str());
     Shader lampShader ((path / "src/shaders/lamp.vs").c_str(),(path / "src/shaders/lamp.fs").c_str());
     Shader normalShader ((path / "src/shaders/normal.vs").c_str(),(path / "src/shaders/normal.fs").c_str(), (path / "src/shaders/normal.gs").c_str());
-
-    //Un cube pour montrer l'effet de la lumière
-    glm::vec3 cubePosition = glm::vec3(-2,0,1);
-    Cube cubeTestLumiere;
-    //Un cube pour faire lampe
-    Cube lamp;
+    //Lampe
+    Sphere sphereLamp;
+    unsigned int moon = loadTexture((path / "src/textures/moon1024.bmp").c_str());
+    lampShader.setInt("tex",0);
 
 
     /*-----AXES-----*/
@@ -104,32 +104,6 @@ int main() {
     Axes axeY(1);
     Axes axeZ(2);
     Shader shaderAxe ((path / "src/shaders/shaderAxes.vs").c_str(),(path / "src/shaders/shaderAxes.fs").c_str());
-
-
-    /*-----COURBES DE BEZIER-----*/
-
-    /*-----Points de controle-----*/
-
-    glm::vec3 pointsControle1[] = {
-            //Positions
-            glm::vec3(-1.5f, 2.0f, 2.0f),
-            glm::vec3(-0.5f, 2.0f, 1.0),
-            glm::vec3(1.0f, 0.5f, -1.0f),
-            glm::vec3(2.0f, 0.5f, -2.0f),
-    };
-
-    glm::vec3 pointsControle2[] = {
-            glm::vec3(2.0f, 0.5f, -2.0f),
-            glm::vec3(2.3f, 0.5f, -1.0),
-            glm::vec3(1.5f, -0.5f, 0.0f),
-            glm::vec3(1.0f, -1.5f, 1.0f),
-    };
-
-    unsigned int nbPointsControl = 4;
-    unsigned int nbSegments = 50;
-    float tailleSegment = 0.1;
-
-
 
 
     /*----SURFACES DE BEZIER----*/
@@ -172,13 +146,17 @@ int main() {
 
     BezierSurface bezierSurface(pointsControl,M,N);
 
+
     /*-----SPHERE-----*/
     Sphere sphere1;
 
+    /*-----SURFACE-----*/
+    Mesh surface;
+    surface.initMesh(bezierSurface.pointsBezier, bezierSurface.indicesBezier);
+
 
     /*-----LIC-----*/
-
-    /*-----Shader-----*/
+    //Shader
     Shader licShader((path / "src/shaders/shader.vs").c_str(), (path / "src/shaders/shader.fs").c_str());
 
     /*------- Texture de bruit couleur --------*/
@@ -188,7 +166,6 @@ int main() {
 
     /*-----GLYPHE FACE BASED VECTOR FIELD-----*/
     Shader glypheShader((path / "src/shaders/glyphe.vs").c_str(), (path / "src/shaders/glyphe.fs").c_str(),(path / "src/shaders/glyphe.gs").c_str() );
-    FaceBasedVectorField faceBasedVectorField(bezierSurface.pointsBezier,bezierSurface.indicesBezier);
 
 
     /*-----INITIALISATION AVANT BOUCLE-----*/
@@ -257,7 +234,6 @@ int main() {
         licShader.setMat4("projection", projection);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, coloredNoise);
-
         licShader.setInt("STEPS",10);
         licShader.setFloat("STEPSIZE",0.001);
         surface.draw();
@@ -271,7 +247,31 @@ int main() {
         }
 
 
-        //FACE BASED VECTOR FIELD
+        //SPHERE
+        licShader.use();
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-4.5f,3.0f,0.0f));
+        licShader.setMat4("model",model);
+        sphere1.draw(licShader);
+        if(normales){
+            normalShader.use();
+            normalShader.setMat4("projection", projection);
+            normalShader.setMat4("view", view);
+            normalShader.setMat4("model", model);
+            sphere1.draw(normalShader);
+        }
+
+
+        /*-----FACE BASED VECTOR FIELD-----*/
+
+        lightingShader.use();
+        lightingShader.setVec3("objectColor", glm::vec3(0.3f, 0.7f, 0.7f));
+        lightingShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        lightingShader.setVec3("lightPos", lightPos);
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setMat4("view", view);
+
+        //SURFACE
         lightingShader.use();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0,3.0,0.0));

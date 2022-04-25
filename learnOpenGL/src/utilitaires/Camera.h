@@ -4,7 +4,6 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
 #include <vector>
 
 // Options possibles pour le mouvement de caméra
@@ -140,18 +139,7 @@ public:
 private:
 
     //update les vecteurs de la caméra
-    void updateCameraVectors() {
-        //Front vector
-        glm::vec3 front;
-        front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-        front.y = sin(glm::radians(Pitch));
-        front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-        Front = glm::normalize(front);
-        //Right vector
-        Right = glm::normalize(glm::cross(Front, WorldUp));
-        //Up vector
-        Up    = glm::normalize(glm::cross(Right, Front));
-    }
+    void updateCameraVectors();
 
 };
 

@@ -33,17 +33,9 @@ public :
         return indices;
     }
 
-    void draw(Shader &shader){
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES,static_cast<unsigned int>(indices.size()),GL_UNSIGNED_INT,0);
-        glBindVertexArray(0);
-    }
+    //Dessiner la sphère
+    void draw(Shader &shader);
 
-    void freeResources(){
-        glDeleteVertexArrays(1,&VAO);
-        glDeleteBuffers(1,&VBO);
-        glDeleteBuffers(1,&EBO);
-    }
 
 private :
 
