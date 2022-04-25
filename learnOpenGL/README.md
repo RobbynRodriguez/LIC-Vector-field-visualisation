@@ -2,7 +2,8 @@
 
 ## Description
 Ce projet contient différentes représentation de champs de vecteur.
-Nous avons pris pour ex
+Nous avons pris pour exemple de représentation des surfaces et des sphères.
+Une première représentation consiste à utiliser l'algorithme Linear Interpolation 
 
 ## Installation
 
