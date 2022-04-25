@@ -57,6 +57,7 @@ void Mesh::computeVectorField(){
         //Le vecteur orthogonale à l'arrête et à la normale
         glm::vec3 e2 = glm::cross(e1, vertices[indices[i]].Normal);
         //Le vecteur du champ qui est donc tangent à notre face
+        //e2.z = e2.z * (float)cos(i);
         vertices[indices[i]].champVect = e2;
     }
 }

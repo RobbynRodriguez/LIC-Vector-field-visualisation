@@ -132,14 +132,3 @@ glm::vec3 Sphere::computeNormalTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c) {
     return  - glm::cross(u,v);
 }
 
-void Sphere::computeVectorField() {
-    //Pour chaque point on associe le vecteur d'une face
-    for (int i=0; i<indices.size(); i+=3){
-        //Une des arrêtes de la face
-        glm::vec3 e1 = sommets[indices[i+1]].Position - sommets[indices[i]].Position;
-        //Le vecteur orthogonale à l'arrête et à la normale
-        glm::vec3 e2 = glm::cross(e1, sommets[indices[i]].Normal);
-        //Le vecteur du champ qui est donc tangent à notre face
-        sommets[indices[i]].champVect = e2;
-    }
-}
