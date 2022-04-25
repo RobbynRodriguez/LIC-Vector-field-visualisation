@@ -2,10 +2,8 @@
 
 Sphere::Sphere() {
     createSphere();
-    cout<<sommets.size()<<endl;
-    computeIndices(LONGITUDE);
 
-    vector<Triangle> faces;
+    computeIndices(LONGITUDE);
 
     //On calcule chaque normal de chaque face
     for (int i=0; i<indices.size(); i+=3){
@@ -53,27 +51,28 @@ void Sphere::draw(Shader &shader) {
 
 void Sphere::createSphere() {
     Vertex vertex0;
-    vertex0.Position = glm::vec3(0.0f, 0.0f, 1.0f);
+    vertex0.Position = glm::vec3(0.0f, 1.0f, 0.0f);
+    vertex0.UV = {0,0};
     sommets.push_back(vertex0);
     for(float m = 1.0; m < LONGITUDE - 1; m++){
         for(float n = 0.0; n < LATTITUDE; n++){
             Vertex vertex;
             float x = (float)glm::sin(M_PI * (m/LONGITUDE)) * (float)glm::cos(2 * M_PI * (n/LATTITUDE));
-            float y = (float)glm::sin(M_PI * (m/LONGITUDE)) * (float)glm::sin(2 * M_PI * (n/LATTITUDE));
-            float z = (float)glm::cos(M_PI * m/LONGITUDE);
+            float y = (float)glm::cos(M_PI * m/LONGITUDE);
+            float z = (float)glm::sin(M_PI * (m/LONGITUDE)) * (float)glm::sin(2 * M_PI * (n/LATTITUDE));
             vertex.Position = glm::vec3(x, y, z);
             sommets.push_back(vertex);
         }
     }
     Vertex lastVertex;
-    lastVertex.Position = glm::vec3(0.0f, 0.0f, -1.0f);
+    lastVertex.Position = glm::vec3(0.0f, -1.0f, 0.0f);
+    lastVertex.UV = {1,1};
     sommets.push_back(lastVertex);
 }
 
 void Sphere::computeIndices(unsigned int n) {
-    /* On crée les premier indices indépendamment puisque
-         * ce sont des cas particulier, ils sont tous liés au pôle */
-    for(int i = 0; i < n + 1; i++){
+    // On crée les premier indices indépendamment puisque ce sont des cas particulier, ils sont tous liés au pôle
+    for(int i = 0; i < n -1; i++){
         //Premier triangle
         indices.push_back(0);
         indices.push_back(i+1);
@@ -108,8 +107,7 @@ void Sphere::computeIndices(unsigned int n) {
     }
 
     // Finalement pour la dernière longitude, particulière puisque tous liés au pôle
-
-    for(int i = sommets.size() - n - 1; i < sommets.size(); i++){
+    for(int i = sommets.size() - n - 1; i < sommets.size()-2; i++){
         //Premier triangle
         indices.push_back(sommets.size() - 1);
         indices.push_back(i+1);
@@ -137,6 +135,6 @@ void Sphere::computeVectorField() {
         //Le vecteur orthogonale à l'arrête et à la normale
         glm::vec3 e2 = glm::cross(e1, sommets[indices[i]].Normal);
         //Le vecteur du champ qui est donc tangent à notre face
-        sommets[indices[i]].champVect =e2;
+        sommets[indices[i]].champVect = e2;
     }
 }

@@ -27,13 +27,16 @@ float lastFrame = 0.0f; // Time of last frame
 float der_time;
 
 //Camera
-Camera camera(glm::vec3(1.0f,1.0f,10.0f));
+Camera camera(glm::vec3(0.0f,3.0f,10.0f));
 float lastX = WIN_WIDTH / 2.0f;
 float lastY = WIN_HEIGHT / 2.0f;
 bool firstMouse = true;
 
 //Lumiere
-glm::vec3 lightPos = glm::vec3(3,3,3);
+float lightX = 2.0f * 2 * sin(0.5*der_time);
+float lightY = 5.0f;
+float lightZ = 1.5f * 3 * cos(0.5*der_time);
+glm::vec3 lightPos = glm::vec3(lightX, lightY, lightZ);
 bool lumiere_bouge;
 bool normales = false;
 bool glyphes = false;
@@ -170,7 +173,6 @@ int main() {
     BezierSurface bezierSurface(pointsControl,M,N);
 
     /*-----SPHERE-----*/
-
     Sphere sphere1;
 
 
@@ -202,7 +204,7 @@ int main() {
         processInput(window);
 
         //rendering
-        glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.1f, 0.3f, 0.2f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //delta time
@@ -249,7 +251,7 @@ int main() {
         //SURFACE
         licShader.use();
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(3,3,0));
+        model = glm::translate(model, glm::vec3(2.0f,3.0f,0.0f));
         licShader.setMat4("model",model);
         licShader.setMat4("view", view);
         licShader.setMat4("projection", projection);
@@ -272,7 +274,7 @@ int main() {
         //FACE BASED VECTOR FIELD
         lightingShader.use();
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(3.0,0.0,6.0));
+        model = glm::translate(model, glm::vec3(0.0,3.0,0.0));
         lightingShader.setMat4("model", model);
         surface.draw();
         if(glyphes){

@@ -5,7 +5,7 @@
 class Axes {
 
 public :
-    std::vector<unsigned int> indices = {0,1};
+    std::vector<unsigned int> indices = {0,1,2,3,4,5,6};
     unsigned int VAO;
     float* vertices;
 

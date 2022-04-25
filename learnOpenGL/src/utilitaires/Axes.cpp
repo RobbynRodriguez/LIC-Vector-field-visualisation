@@ -4,19 +4,35 @@
 #include "Axes.h"
 using namespace std;
 
+
 float axeX[] = {
         0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f,
-        1.0f,0.0f,0.0f, 1.0f,0.0f,0.0f
+        1.0f,0.0f,0.0f, 1.0f,0.0f,0.0f,
+        1.0f, 0.05f, 0.05f, 1.0f,0.0f,0.0f,
+        1.0f, 0.05f, -0.05f, 1.0f,0.0f,0.0f,
+        1.0f, -0.05f, -0.05f, 1.0f,0.0f,0.0f,
+        1.0f, -0.05, 0.05f, 1.0f,0.0f,0.0f,
+        1.1f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f
 };
 
 float axeY[] = {
         0.0f, 0.0f, 0.0f,0.0f,1.0f,0.0f,
-        0.0f, 1.0f, 0.0f,0.0f,1.0f,0.0f
+        0.0f, 1.0f, 0.0f,0.0f,1.0f,0.0f,
+        0.05f, 1.0f, 0.05f, 0.0f,1.0f,0.0f,
+        -0.05f, 1.0f, 0.05f, 0.0f,1.0f,0.0f,
+        -0.05f, 1.0f, -0.05f, 0.0f,1.0f,0.0f,
+        0.05f, 1.0f, -0.05f, 0.0f,1.0f,0.0f,
+        0.0f, 1.1f, 0.0f, 0.0f, 1.0f, 0.0f
 };
 
 float axeZ[] = {
         0.0f,0.0f,0.0f, 0.0f,0.0f,1.0f,
-        0.0f,0.0f,1.0f,0.0f,0.0f,1.0f
+        0.0f,0.0f,1.0f,0.0f,0.0f,1.0f,
+        0.05f, 0.05f, 1.0f, 0.0f,0.0f,1.0f,
+        -0.05f, 0.05f, 1.0f, 0.0f,0.0f,1.0f,
+        0.05f, -0.05f, 1.0f, 0.0f,0.0f,1.0f,
+        -0.05f, -0.05f, 1.0f, 0.0f,0.0f,1.0f,
+        0.0f, 0.0f, 1.1f, 0.0f, 0.0f, 1.0f
 };
 
 Axes::Axes(int numAxe) {
@@ -48,6 +64,7 @@ Axes::~Axes(){
 void Axes::DrawAxes(Shader &shader) {
     glBindVertexArray(VAO);
     glDrawElements(GL_LINE_STRIP,static_cast<unsigned int>(indices.size()),GL_UNSIGNED_INT,0);
+    //glDrawElements(GL_TRIANGLES,static_cast<unsigned int>(indicesPyramide.size()),GL_UNSIGNED_INT,0);
     glBindVertexArray(0);
 }
 
@@ -60,7 +77,7 @@ void Axes::setUpAxe() {
 
     //VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, 12*sizeof(float), &vertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 42*sizeof(float), &vertices[0], GL_STATIC_DRAW);
     //EBO
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
