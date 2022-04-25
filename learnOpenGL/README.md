@@ -1,9 +1,12 @@
 # Visualisation de champs de vecteurs
 
 ## Description
-Ce projet contient différentes représentation de champs de vecteur.
+Ce projet contient différentes représentations de champs de vecteur.
 Nous avons pris pour exemple de représentation des surfaces et des sphères.
-Une première représentation consiste à utiliser l'algorithme Linear Interpolation 
+Une première représentation consiste à utiliser l'algorithme LIC (Line Integral Convolution) avec une texture de bruit 
+et une fonction R2->R2 d'un champ de vecteurs.
+Une seconde représentation consiste à créer un champ de vecteurs discret à partir des tangentes aux faces d'un maillage
+et à associer chaque vecteur à un sommet pour ensuite représenter le champ vecteurs par des hedgehog glyphs. 
 
 ## Installation
 
@@ -21,3 +24,5 @@ Appuyer sur W (clavier français) permet d'afficher le maillage triangulaire, X 
 Appuyer sur N permet d'afficher les normales à la surface, B permet de les enlever.
 
 Appuyer sur G permet d'afficher les glyphes des tangentes à la surface, H permet de les enlever.
+
+Appuyer sur 1 permet de faire tourner la lumière, 0 permet de l'arrêter.

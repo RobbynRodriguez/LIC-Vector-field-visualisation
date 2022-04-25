@@ -39,7 +39,7 @@ glm::vec3 lightPos = glm::vec3(lightX, lightY, lightZ);
 bool lumiere_bouge;
 
 bool normales = false;
-bool glyphes = false;
+bool glyphes = true;
 
 
 /*-----FONCTIONS ANNEXES-----*/
