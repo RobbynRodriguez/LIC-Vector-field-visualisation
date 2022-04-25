@@ -10,9 +10,6 @@ find_package(Qt5 COMPONENTS OpenGL REQUIRED)
 find_package(OpenGL REQUIRED) # define OPENGL_LIBRARIES
 find_package(X11 REQUIRED)
 
-#add_library(glad "/usr/include/glad/glad.h" "librairies/glad.c")
-#add_executable(learnOpenGL "main.cpp" "librairies/glad.c" utilitaires/Shader.h librairies/stb_image.cpp utilitaires/Camera.h utilitaires/Axes.h bezier/BezierSurface.h utilitaires/Structures.h)
-
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 set(LIBS glfw GLU X11 Xrandr Xinerama Xi Xxf86vm Xcursor GL pthread)
