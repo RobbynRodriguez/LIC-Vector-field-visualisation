@@ -8,8 +8,6 @@
 #include "utilitaires/Shader.h"
 #include "librairies/stb_image.h"
 #include "utilitaires/Camera.h"
-#include "utilitaires/Texture.h"
-#include "bezier/BezierCurve.h"
 #include "utilitaires/Axes.h"
 #include "utilitaires/Cube.h"
 #include "bezier/BezierSurface.h"
@@ -91,10 +89,6 @@ int main() {
     Shader lampShader ((path / "src/shaders/lamp.vs").c_str(),(path / "src/shaders/lamp.fs").c_str());
     Shader normalShader ((path / "src/shaders/normal.vs").c_str(),(path / "src/shaders/normal.fs").c_str(), (path / "src/shaders/normal.gs").c_str());
 
-    //Le shader à utiliser pour les objets éclairés
-//    Shader lightingShader("/home/maud/Documents/M1/IGAI/TP/src/shaders/lighting.vs","/home/maud/Documents/M1/IGAI/TP/learnOpenGL/shaders/lighting.fs");
-    //Le shader à utiliser pour la lumière
-//    Shader lampShader ("/home/maud/Documents/M1/IGAI/TP/learnOpenGL/shaders/lamp.vs","/home/maud/Documents/M1/IGAI/TP/learnOpenGL/shaders/lamp.fs");
     //Un cube pour montrer l'effet de la lumière
     glm::vec3 cubePosition = glm::vec3(-2,0,1);
     Cube cubeTestLumiere;
@@ -108,7 +102,6 @@ int main() {
     Axes axeY(1);
     Axes axeZ(2);
     Shader shaderAxe ((path / "src/shaders/shaderAxes.vs").c_str(),(path / "src/shaders/shaderAxes.fs").c_str());
-//    Shader shaderAxe ("/home/maud/Documents/M1/IGAI/TP/learnOpenGL/shaders/shaderAxes.vs","/home/maud/Documents/M1/IGAI/TP/learnOpenGL/shaders/shaderAxes.fs");
 
 
     /*-----COURBES DE BEZIER-----*/
@@ -134,15 +127,7 @@ int main() {
     unsigned int nbSegments = 50;
     float tailleSegment = 0.1;
 
-    /*-----Nombre de segments uniforme-----*/
-    BezierCurve bezierCurve1(pointsControle1, nbPointsControl, nbSegments);
-    //BezierCurve bezierCurve2(pointsControle2,nbPointsControl,nbSegments);
-    /*-----Taille de segment uniforme-----*/
-    //BezierCurve bezierCurve1(pointsControle1,nbPointsControl,tailleSegment);
-    BezierCurve bezierCurve2(pointsControle2,nbPointsControl,tailleSegment);
-    //shader
-    Shader shaderBezier ((path / "src/shaders/shaderBezierCurve.vs").c_str(),(path / "src/shaders/shaderBezierCurve.fs").c_str());
-//    Shader shaderBezier("/home/maud/Documents/M1/IGAI/TP/learnOpenGL/shaders/shaderBezierCurve.vs", "/home/maud/Documents/M1/IGAI/TP/learnOpenGL/shaders/shaderBezierCurve.fs");
+
 
 
     /*----SURFACES DE BEZIER----*/
@@ -274,32 +259,10 @@ int main() {
         //render la lampe
         lamp.Draw(lampShader);
 
-        //COURBES DE BEZIER
-        shaderBezier.use();
-        shaderBezier.setMat4("view", view);
-        shaderBezier.setMat4("projection", projection);
+
         model = glm::mat4(1.0f);
-        shaderBezier.setMat4("model", model);
-
-        //Dessin des polynomes de controle
-        shaderBezier.setVec3("objectColor",glm::vec3(0.7,0.7,0.7));
-        bezierCurve1.DrawPointsControle(shaderBezier);
-        bezierCurve1.DrawSegments(shaderBezier);
-        bezierCurve2.DrawPointsControle(shaderBezier);
-        bezierCurve2.DrawSegments(shaderBezier);
-
-        //Dessin des courbes
-        shaderBezier.setVec3("objectColor",glm::vec3(0,0,0));
-        bezierCurve1.DrawBezierCurve(shaderBezier);
-        bezierCurve2.DrawBezierCurve(shaderBezier);
-
-        //SURFACE DE BEZIER
         model = glm::translate(model, glm::vec3(3,0,0));
-        shaderBezier.setMat4("model", model);
 
-        //Dessin des points de controle
-        shaderBezier.setVec3("objectColor",glm::vec3(0,0,0));
-        bezierSurface.drawPointsControl(shaderBezier);
 
         //Dessin de la surface
         lightingShader.use();
@@ -360,17 +323,14 @@ int main() {
     }
 
     //Free les ressources
-    bezierCurve1.FreeResources();
-    bezierCurve2.FreeResources();
-    bezierSurface.FreeResources();
-    axeX.FreeResources();
-    axeY.FreeResources();
-    axeZ.FreeResources();
-    cubeTestLumiere.FreeResources();
-    lamp.FreeResources();
-    meshLic.freeResources();
-    sphere1.freeResources();
-
+    bezierSurface.~BezierSurface();
+    axeX.~Axes();
+    axeY.~Axes();
+    axeZ.~Axes();
+    cubeTestLumiere.~Cube();
+    lamp.~Cube();
+    meshLic.~MeshLic();
+    sphere1.~Sphere();
     glfwTerminate();
 
     return 0;

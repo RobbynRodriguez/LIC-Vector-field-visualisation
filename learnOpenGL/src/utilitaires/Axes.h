@@ -1,36 +1,11 @@
 #ifndef LEARNOPENGL_AXES_H
 #define LEARNOPENGL_AXES_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <vector>
-using namespace std;
-#include "Shader.h"
-
-
-float axeX[] = {
-        0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f,
-        1.0f,0.0f,0.0f, 1.0f,0.0f,0.0f
-};
-
-float axeY[] = {
-        0.0f, 0.0f, 0.0f,0.0f,1.0f,0.0f,
-        0.0f, 1.0f, 0.0f,0.0f,1.0f,0.0f
-};
-
-float axeZ[] = {
-            0.0f,0.0f,0.0f, 0.0f,0.0f,1.0f,
-            0.0f,0.0f,1.0f,0.0f,0.0f,1.0f
-};
-
-vector<unsigned int> indices = {0,1};
-
-
 //Classe pour la création des axes X, Y et Z
 class Axes {
 
 public :
+    std::vector<unsigned int> indices = {0,1};
     unsigned int VAO;
     float* vertices;
 

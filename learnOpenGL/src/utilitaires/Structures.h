@@ -2,6 +2,7 @@
 #define LEARNOPENGL_STRUCTURES_H
 
 #include <vector>
+#include <glm/glm.hpp>
 using namespace std;
 
 //Fichier contenant des structures utilitaires
