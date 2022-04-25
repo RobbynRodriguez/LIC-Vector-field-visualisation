@@ -16,9 +16,9 @@ BezierSurface::BezierSurface(vector<vector<glm::vec3>> pointsControl,unsigned in
 }
 
 BezierSurface::~BezierSurface(){
-    glDeleteVertexArrays(1, &VAOControl);
-    glDeleteBuffers(1, &VBOControl);
-    glDeleteBuffers(1, &EBOControl);
+//    glDeleteVertexArrays(1, &VAOControl);
+//    glDeleteBuffers(1, &VBOControl);
+//    glDeleteBuffers(1, &EBOControl);
     surfaceMesh.~Mesh();
 }
 

@@ -320,7 +320,6 @@ int main() {
     }
 
     //Free les ressources
-    bezierSurface.~BezierSurface();
     axeX.~Axes();
     axeY.~Axes();
     axeZ.~Axes();
