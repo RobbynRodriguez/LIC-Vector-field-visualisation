@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include "../utilitaires/Structures.h"
+#include "../utilitaires/Mesh.h"
 using namespace std;
 
 //Classe pour les surfaces de Bézier
@@ -17,8 +18,6 @@ public :
 
     //Un VAO pour dessiner les points de controle
     unsigned int VAOControl;
-    //Un VAO pour dessiner la surface de Bézier
-    unsigned  int VAOBezier;
 
     //Control Data
     vector<vector<glm::vec3>> pointsControl;
@@ -29,6 +28,7 @@ public :
     //Bezier data
     vector<Vertex> pointsBezier;
     vector<unsigned int> indicesBezier;
+    Mesh surfaceMesh;
     //Pour dessiner la surface en nombre uniforme de segment, ici avec un pas de 0.02
     float PAS_U = 0.02;
     float PAS_V = 0.02;
@@ -47,7 +47,7 @@ public :
 private:
 
     //Un VBO et un EBO pour les points de controle et les points de Bézier
-    unsigned int VBOControl, EBOControl, VBOBezier, EBOBezier;
+    unsigned int VBOControl, EBOControl;
 
     //Set up des points de controle
     void setUpControl ();
@@ -57,9 +57,6 @@ private:
 
     //Gestion du mesh pour les points de controle
     void setupMesh(vector<Vertex> vertices, vector<unsigned int> indices, unsigned int VAO, unsigned int VBO, unsigned int EBO);
-
-    //Gestion du mesh pour la surface
-    void setUpMeshSurface();
 
     //Calculer le point P(U,V)
     glm::vec3 computePointUV(float u, float v);

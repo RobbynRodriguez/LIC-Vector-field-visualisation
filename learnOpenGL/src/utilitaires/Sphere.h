@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include "../utilitaires/Structures.h"
 #include "../utilitaires/Shader.h"
+#include "../utilitaires/Mesh.h"
 
 using namespace std;
 
@@ -19,11 +20,10 @@ public :
     unsigned int VAO;
     vector<Vertex> sommets;
     vector<unsigned int> indices;
+    Mesh sphereMesh;
 
     //Constructeur
     Sphere();
-
-    ~Sphere();
 
     vector<Vertex> getVertex(){
         return sommets;
@@ -50,7 +50,7 @@ private :
     unsigned int VBO,EBO;
 
     //set up les vertex array et buffer
-    void setUpMesh();
+//    void setUpMesh();
 
     //Créer le mesh de la sphère
     void createSphere();

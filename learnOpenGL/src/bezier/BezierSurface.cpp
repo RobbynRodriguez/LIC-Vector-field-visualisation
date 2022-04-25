@@ -7,7 +7,6 @@ BezierSurface::BezierSurface(vector<vector<glm::vec3>> pointsControl,unsigned in
 
     //On génère les VAO
     glGenVertexArrays(1, &VAOControl);
-    glGenVertexArrays(1, &VAOBezier);
 
     //On set up les points de controle
     setUpControl();
@@ -18,11 +17,9 @@ BezierSurface::BezierSurface(vector<vector<glm::vec3>> pointsControl,unsigned in
 
 BezierSurface::~BezierSurface(){
     glDeleteVertexArrays(1, &VAOControl);
-    glDeleteVertexArrays(1, &VAOBezier);
     glDeleteBuffers(1, &VBOControl);
     glDeleteBuffers(1, &EBOControl);
-    glDeleteBuffers(1, &VBOBezier);
-    glDeleteBuffers(1, &EBOBezier);
+    surfaceMesh.~Mesh();
 }
 
 //Pour dessiner les points de controle
@@ -37,11 +34,7 @@ void BezierSurface::drawPointsControl(Shader &shader){
 
 //Pour dessiner la surface de Bézier
 void BezierSurface::drawBezierSurface (Shader &shader){
-
-    glBindVertexArray(VAOBezier);
-    glDrawElements(GL_TRIANGLES,static_cast<unsigned int>(indicesBezier.size()),GL_UNSIGNED_INT,0);
-    glBindVertexArray(0);
-
+    surfaceMesh.draw();
 }
 
 
@@ -111,9 +104,6 @@ void BezierSurface::setUpBezier(){
         face.S1 = indicesBezier[i];
         face.S2 = indicesBezier[i+1];
         face.S3 = indicesBezier[i+2];
-//            cout << "S1 " << pointsBezier[face.S1].Position[0] << "," << pointsBezier[face.S1].Position[1] << "," << pointsBezier[face.S1].Position[2]  << endl;
-//            cout << "S2 " << pointsBezier[face.S2].Position[0] << "," << pointsBezier[face.S2].Position[1] << "," << pointsBezier[face.S2].Position[2]  << endl;
-//            cout << "S3 " << pointsBezier[face.S3].Position[0] << "," << pointsBezier[face.S3].Position[1] << "," << pointsBezier[face.S3].Position[2]  << endl;
         face.Normal = computeNormalTriangle(pointsBezier[face.S1].Position, pointsBezier[face.S2].Position,
                                             pointsBezier[face.S3].Position);
 
@@ -138,30 +128,18 @@ void BezierSurface::setUpBezier(){
             x -= 1;
         }
         for (int j=0; j<x;j++){
-//                cout << " cpamoa "<<pointsBezier[i].faces[j].Normal[0] << "," << pointsBezier[i].faces[j].Normal[1] << "," << pointsBezier[i].faces[j].Normal[2] << endl;
             normal+=pointsBezier[i].faces[j].Normal;
         }
-//            cout << normal[0] << "," << normal[1] << "," << normal[2]  << endl;
         //On lui passe la normal normalisée
         if(x == 1 && i == 0){
             pointsBezier[i].Normal = - glm::normalize(normal);
         }else {
             pointsBezier[i].Normal = glm::normalize(normal);
         }
-
-//            if((i>=0 && i <50) || i%n==0){
-//                pointsBezier[i].Normal = -pointsBezier[i].Normal;
-//            }
-//            pointsBezier[i].Normal = normal;
-//            cout << pointsBezier[i].Normal[0] << "," << pointsBezier[i].Normal[1] << "," << pointsBezier[i].Normal[2]  << endl;
     }
 
-    //On génère les buffers
-    glGenBuffers(1, &VBOBezier);
-    glGenBuffers(1, &EBOBezier);
-
     //On met à jour les buffers
-    setUpMeshSurface();
+    surfaceMesh.initMesh(pointsBezier, indicesBezier);
 
 }
 
@@ -184,32 +162,6 @@ void BezierSurface::setupMesh(vector<Vertex> vertices, vector<unsigned int> indi
 
 }
 
-//Gestion du mesh pour la surface
-void BezierSurface::setUpMeshSurface (){
-
-    glBindVertexArray(VAOBezier);
-
-    //VBO
-    glBindBuffer(GL_ARRAY_BUFFER, VBOBezier);
-    glBufferData(GL_ARRAY_BUFFER, pointsBezier.size() * sizeof(Vertex), &pointsBezier[0], GL_STATIC_DRAW);
-    //EBO
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOBezier);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBezier.size() * sizeof(unsigned int), &indicesBezier[0], GL_STATIC_DRAW);
-
-    //Set the vertex attribute pointers
-    // vertex positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    // vertex normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    // vertex texture coords
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV));
-
-    glBindVertexArray(0);
-
-}
 
 //Calculer le point P(U,V)
 glm::vec3 BezierSurface::computePointUV(float u, float v){

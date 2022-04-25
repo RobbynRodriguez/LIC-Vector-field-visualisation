@@ -11,8 +11,6 @@
 #include "utilitaires/Axes.h"
 #include "utilitaires/Cube.h"
 #include "bezier/BezierSurface.h"
-#include "utilitaires/meshLic.h"
-#include "utilitaires/FaceBasedVectorField.h"
 #include "utilitaires/Sphere.h"
 
 using namespace std;
@@ -38,6 +36,7 @@ bool firstMouse = true;
 glm::vec3 lightPos = glm::vec3(3,3,3);
 bool lumiere_bouge;
 bool normales = false;
+bool glyphes = false;
 
 
 /*-----FONCTIONS ANNEXES-----*/
@@ -183,7 +182,6 @@ int main() {
     /*------- Texture de bruit couleur --------*/
     unsigned int coloredNoise = loadTexture((path / "src/textures/coloredNoise.png").c_str());
     licShader.setInt("tex", 0);
-    MeshLic meshLic(bezierSurface.pointsBezier,bezierSurface.indicesBezier);
 
 
     /*-----GLYPHE FACE BASED VECTOR FIELD-----*/
@@ -226,52 +224,29 @@ int main() {
         axeY.DrawAxes(shaderAxe);
         axeZ.DrawAxes(shaderAxe);
 
-        //CUBE TEST LUMIERE
-        lightingShader.use();
-        lightingShader.setVec3("objectColor", glm::vec3(0.3f, 0.7f, 0.7f));
-        lightingShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        lightingShader.setVec3("lightPos", lightPos);
-        lightingShader.setMat4("projection", projection);
-        lightingShader.setMat4("view", view);
-
-        // world transformation
-        model = glm::translate(model, cubePosition);
-        lightingShader.setMat4("model", model);
-        // render the cube
-        cubeTestLumiere.Draw(lightingShader);
-
         //LAMPE
         lampShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, moon);
         lampShader.setMat4("projection", projection);
         lampShader.setMat4("view", view);
         if(lumiere_bouge) {
             der_time = der_time + deltaTime;
-            float lightX = 2.0f * 2 * sin(der_time);
-            float lightY = 5.0f;
-            float lightZ = 1.5f * 3 * cos(der_time);
+            lightX = 2.0f * 2 * sin(0.5*der_time);
+            lightY = 5.0f;
+            lightZ = 1.5f * 3 * cos(0.5*der_time);
             lightPos = glm::vec3(lightX, lightY, lightZ);
         }
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.2f)); //smaller sphere
         lampShader.setMat4("model", model);
-        //render la lampe
-        lamp.Draw(lampShader);
+        sphereLamp.draw(lampShader);
 
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(3,0,0));
+        /*---------LIC----------*/
 
-
-        //Dessin de la surface
-        lightingShader.use();
-        lightingShader.setMat4("model", model);
-        lightingShader.setVec3("objectColor",glm::vec3(0.3f, 0.6f, 0.5f));
-        bezierSurface.drawBezierSurface(shaderBezier);
-
-
-        //LIC
+        //SURFACE
         licShader.use();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(3,3,0));
@@ -283,39 +258,59 @@ int main() {
 
         licShader.setInt("STEPS",10);
         licShader.setFloat("STEPSIZE",0.001);
-        meshLic.draw(licShader);
+        surface.draw();
 
         if(normales){
             normalShader.use();
             normalShader.setMat4("projection", projection);
             normalShader.setMat4("view", view);
             normalShader.setMat4("model", model);
-            meshLic.draw(normalShader);
+            surface.draw();
         }
+
 
         //FACE BASED VECTOR FIELD
         lightingShader.use();
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(3.0,0.0,6.0));
         lightingShader.setMat4("model", model);
-        faceBasedVectorField.draw(lightingShader);
-        glypheShader.use();
-        glypheShader.setMat4("model",model);
-        glypheShader.setMat4("view", view);
-        glypheShader.setMat4("projection",projection);
-        faceBasedVectorField.draw(glypheShader);
+        surface.draw();
+        if(glyphes){
+            glypheShader.use();
+            glypheShader.setMat4("model",model);
+            glypheShader.setMat4("view", view);
+            glypheShader.setMat4("projection",projection);
+            surface.draw();
+        }
+        if(normales){
+            normalShader.use();
+            normalShader.setMat4("projection", projection);
+            normalShader.setMat4("view", view);
+            normalShader.setMat4("model", model);
+            surface.draw();
+        }
 
-        //Sphere
+        //SPHERE
         lightingShader.use();
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-2.0,4.0,0.0));
+        model = glm::translate(model, glm::vec3(-2.0f,3.0f,0.0f));
+        //model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         lightingShader.setMat4("model", model);
         sphere1.draw(lightingShader);
-        glypheShader.use();
-        glypheShader.setMat4("model",model);
-        glypheShader.setMat4("view", view);
-        glypheShader.setMat4("projection",projection);
-        sphere1.draw(glypheShader);
+        if(glyphes){
+            glypheShader.use();
+            glypheShader.setMat4("model",model);
+            glypheShader.setMat4("view", view);
+            glypheShader.setMat4("projection",projection);
+            sphere1.draw(glypheShader);
+        }
+        if(normales){
+            normalShader.use();
+            normalShader.setMat4("projection", projection);
+            normalShader.setMat4("view", view);
+            normalShader.setMat4("model", model);
+            sphere1.draw(normalShader);
+        }
 
         // check and call events and swap the buffers
         glfwPollEvents();
@@ -327,10 +322,9 @@ int main() {
     axeX.~Axes();
     axeY.~Axes();
     axeZ.~Axes();
-    cubeTestLumiere.~Cube();
-    lamp.~Cube();
-    meshLic.~MeshLic();
-    sphere1.~Sphere();
+    surface.~Mesh();
+    sphere1.sphereMesh.~Mesh();
+    sphereLamp.sphereMesh.~Mesh();
     glfwTerminate();
 
     return 0;
@@ -383,6 +377,10 @@ void processInput(GLFWwindow *window) {
         normales = true;
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
         normales = false;
+    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+        glyphes = true;
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+        glyphes = false;
 
     //Supprimer le contrôle via la souris en appuyant sur o
     if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS){

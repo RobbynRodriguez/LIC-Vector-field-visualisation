@@ -74,6 +74,6 @@ vec3 LIC(){
 
 void main(){
     vec3 result = LIC();
-//     vec3 result = vec3(texture(tex,TextCoords));
+//    vec3 result = vec3(texture(tex,TextCoords));
     FragColor = vec4(result, 1.0);
 }

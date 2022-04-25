@@ -37,62 +37,19 @@ Sphere::Sphere() {
             normal+=sommets[i].faces[j].Normal;
         }
         //On lui passe la normal normalisée
-        sommets[i].Normal = glm::normalize(normal);
+        sommets[i].Normal = - glm::normalize(normal);
 
-//            if((i>=0 && i <50) || i%n==0){
-//                pointsBezier[i].Normal = -pointsBezier[i].Normal;
-//            }
-//            pointsBezier[i].Normal = normal;
     }
-    sommets[2401].Normal = glm::normalize(glm::vec3(0.0, 0.0, -1.0));
+    sommets[sommets.size()-1].Normal = - glm::normalize(glm::vec3(0.0, 1.0, 0.0));
 
-    computeVectorField();
-
-    setUpMesh();
+    sphereMesh.initMesh(sommets, indices);
 }
 
-Sphere::~Sphere(){
-    glDeleteVertexArrays(1,&VAO);
-    glDeleteBuffers(1,&VBO);
-    glDeleteBuffers(1,&EBO);
-}
 
 void Sphere::draw(Shader &shader) {
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES,static_cast<unsigned int>(indices.size()),GL_UNSIGNED_INT,0);
-    glBindVertexArray(0);
+    sphereMesh.draw();
 }
 
-void Sphere::setUpMesh() {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-
-    //VBO
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sommets.size() * sizeof(Vertex), &sommets[0], GL_STATIC_DRAW);
-    //EBO
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-    //Set the vertex attribute pointers
-    // vertex positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    // vertex normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    // vertex texture coords
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV));
-    // vertex vector field
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,champVect));
-
-    glBindVertexArray(0);
-}
 
 void Sphere::createSphere() {
     Vertex vertex0;
@@ -126,14 +83,28 @@ void Sphere::computeIndices(unsigned int n) {
 
     // Pour tout les triangles intemédiaires
     for(int i = 1; i < sommets.size() - n - 1; i++){
-        //1er triangle
-        indices.push_back(i);
-        indices.push_back(i+1);
-        indices.push_back(i+n);
-        //2ème triangle
-        indices.push_back(i+n);
-        indices.push_back(i+n+1);
-        indices.push_back(i+1);
+        if(i%n!=0) {
+            //1er triangle
+            indices.push_back(i);
+            indices.push_back(i + 1);
+            indices.push_back(i + n);
+            //2ème triangle
+            indices.push_back(i + n);
+            indices.push_back(i + n + 1);
+            indices.push_back(i + 1);
+        }
+        //On ferme la boucle
+        else{
+            //Avant dernier triangle de lattitude
+            indices.push_back(i);
+            indices.push_back(i - n + 1);
+            indices.push_back(i + n);
+
+            // Dernier triangle de lattitude
+            indices.push_back(i + n);
+            indices.push_back(i + 1);
+            indices.push_back(i - n + 1);
+        }
     }
 
     // Finalement pour la dernière longitude, particulière puisque tous liés au pôle
