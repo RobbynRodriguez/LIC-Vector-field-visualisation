@@ -17,8 +17,8 @@ using namespace std;
 /*-----VARIABLES GLOBALES-----*/
 
 //Fenetre
-const unsigned int WIN_WIDTH = 1400;
-const unsigned int WIN_HEIGHT = 1000;
+const unsigned int WIN_WIDTH = 800;
+const unsigned int WIN_HEIGHT = 600;
 
 //Temps
 float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -157,7 +157,7 @@ int main() {
 
     /*-----LIC-----*/
     //Shader
-    Shader licShader((path / "src/shaders/shader.vs").c_str(), (path / "src/shaders/shader.fs").c_str());
+    Shader licShader((path / "src/shaders/shaderLIC.vs").c_str(), (path / "src/shaders/shaderLIC.fs").c_str());
     //Texture de bruit
     unsigned int coloredNoise = loadTexture((path / "src/textures/gray noise.png").c_str());
     licShader.setInt("tex", 0);
@@ -235,6 +235,7 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, coloredNoise);
         licShader.setInt("STEPS",10);
         licShader.setFloat("STEPSIZE",0.001);
+        licShader.setFloat("t", currentFrame);
         surface.draw();
 
         if(normales){

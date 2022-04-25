@@ -3,6 +3,7 @@
 uniform sampler2D tex;
 uniform int STEPS;
 uniform float STEPSIZE;
+uniform float t;
 
 in vec3 Normal;
 in vec3 FragPos;
@@ -12,8 +13,13 @@ out vec4 FragColor;
 
 //Fonction(s) du champ de vecteurs
 vec2 champVectoriel(float x, float y){
-//     return vec2(pow(sin(x), 2) + pow(y, 2), pow(cos(x), 2) - pow(y, 2));
-    return vec2(sin(10*x) + sin(10*y), sin(10*x) - sin(10*y));
+    x = 2 * x -1;
+    y = 2 * y -1;
+    x = x*10;
+    y = y*10;
+//     return vec2(-x, -y);
+//     return vec2(-y, x);
+    return vec2(sin(x * t) + sin(y), sin(x) - sin(y * t));
 }
 
 //Verifier que les coordonnées ne sortent pas de la texture

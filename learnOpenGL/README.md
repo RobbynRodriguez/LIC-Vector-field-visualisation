@@ -10,7 +10,16 @@ et à associer chaque vecteur à un sommet pour ensuite représenter le champ ve
 
 ## Installation
 
+Clion : ouvrir le projet, le build et lancer l'éxecutable "main".
 
+En ligne de commande : Se positionner dans le dossier
+```bash
+mkdir build
+cd build
+cmake ..
+make
+./main
+```
 
 ## Usage
 
