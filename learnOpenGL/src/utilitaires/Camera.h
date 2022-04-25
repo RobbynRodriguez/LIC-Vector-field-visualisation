@@ -49,22 +49,10 @@ public:
     /*-----Constructeurs-----*/
 
     //Constructeur avec vecteur
-    Camera (glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
-        Position = position;
-        WorldUp = up;
-        Yaw = yaw;
-        Pitch = pitch;
-        updateCameraVectors();
-    }
+    Camera (glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 
     //Constructeur avec scalaire
-    Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM) {
-        Position = glm::vec3(posX, posY, posZ);
-        WorldUp = glm::vec3(upX, upY, upZ);
-        Yaw = yaw;
-        Pitch = pitch;
-        updateCameraVectors();
-    }
+    Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
 
     /*-----Getter-----*/
@@ -83,58 +71,13 @@ public:
     /*-----Processing-----*/
 
     //Appelé par process input pour bouger la caméra avec le clavier
-    void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
-        float velocity = MovementSpeed * deltaTime;
-        switch(direction){
-            case FORWARD :
-                Position += Front * velocity;
-                break;
-            case BACKWARD :
-                Position -= Front * velocity;
-                break;
-            case LEFT :
-                Position -= Right * velocity;
-                break;
-            case RIGHT :
-                Position += Right * velocity;
-                break;
-            case UP :
-                Position += Up * velocity;
-                break;
-            case DOWN :
-                Position -= Up * velocity;
-                break;
-        }
-
-    }
+    void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 
     //Appelé par process input pour bouger la caméra selon le mouvement de la souris
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) {
-        xoffset *= MouseSensitivity;
-        yoffset *= MouseSensitivity;
-
-        Yaw   += xoffset;
-        Pitch += yoffset;
-
-        if (constrainPitch){
-            if (Pitch > 89.0f)
-                Pitch = 89.0f;
-            if (Pitch < -89.0f)
-                Pitch = -89.0f;
-        }
-
-        updateCameraVectors();
-    }
+    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
 
     //Appelé par process input pour zoomer avec le scroll
-    void ProcessMouseScroll(float yoffset) {
-        Zoom -= (float)yoffset;
-        if (Zoom < 1.0f)
-            Zoom = 1.0f;
-        if (Zoom > 45.0f)
-            Zoom = 45.0f;
-    }
-
+    void ProcessMouseScroll(float yoffset);
 
 private:
 

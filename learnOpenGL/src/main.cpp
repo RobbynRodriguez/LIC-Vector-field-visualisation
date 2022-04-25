@@ -23,7 +23,7 @@ const unsigned int WIN_HEIGHT = 1000;
 //Temps
 float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
-float der_time;
+float der_time = 0.0f;
 
 //Camera
 Camera camera(glm::vec3(0.0f,3.0f,10.0f));
@@ -158,9 +158,8 @@ int main() {
     /*-----LIC-----*/
     //Shader
     Shader licShader((path / "src/shaders/shader.vs").c_str(), (path / "src/shaders/shader.fs").c_str());
-
-    /*------- Texture de bruit couleur --------*/
-    unsigned int coloredNoise = loadTexture((path / "src/textures/coloredNoise.png").c_str());
+    //Texture de bruit
+    unsigned int coloredNoise = loadTexture((path / "src/textures/gray noise.png").c_str());
     licShader.setInt("tex", 0);
 
 

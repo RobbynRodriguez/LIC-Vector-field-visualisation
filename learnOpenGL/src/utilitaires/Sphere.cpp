@@ -58,6 +58,7 @@ void Sphere::createSphere() {
             float y = (float)glm::cos(M_PI * m/LONGITUDE);
             float z = (float)glm::sin(M_PI * (m/LONGITUDE)) * (float)glm::sin(2 * M_PI * (n/LATTITUDE));
             vertex.Position = glm::vec3(x, y, z);
+            vertex.UV = {n/(LATTITUDE),m/(LONGITUDE)};
             sommets.push_back(vertex);
         }
     }
